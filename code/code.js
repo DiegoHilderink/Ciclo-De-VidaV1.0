@@ -1,12 +1,10 @@
 class Persona {
-  constructor (nombre, edad, genero, prob, suerte, id){
+  constructor (nombre, edad, genero, prob, suerte){
     this.__edad = edad || 0;
     this.__genero = genero || this.generoRnd();
     this.__nombre = nombre || this.nombreRnd();
     this.__prob = prob || 0;
     this.__suerte = suerte || 0;
-    this.__alive = true;
-    this.__id = id;
   }
 
   get nombre () { return this.__nombre; }
@@ -14,7 +12,6 @@ class Persona {
   get genero () { return this.__genero; }
   get prob () {  return this.__prob; }
   get suerte () { return this.__suerte; }
-  get alive () { return this.__alive; }
 
   set nombre ( nuevoNombre ){
     this.__nombre = nuevoNombre;
@@ -30,14 +27,6 @@ class Persona {
   }
   set suerte ( nuevaSuerte ){
     this.__suerte = nuevaSuerte;
-  }
-
-  set alive ( alive ){
-    this.__alive = alive;
-  }
-
-  set id ( id ){
-    this.__id = id; 
   }
 
   nombreRnd(){
@@ -61,26 +50,6 @@ class Persona {
     this.suerte = this.suerteRnd();
   }
 
-  getEdad(){
-    return this.edad;
-  }
-
-  getNombre(){
-    return this.nombre;
-  }
-
-  getGenero(){
-    return this.genero;
-  }
-
-  getAlive(){
-    return this.alive;
-  }
-
-  getId(){
-    return this.id; 
-  }
-
   mostrar(){
     return this.nombre + " - " + this.edad + " - " + this.genero;
   }
@@ -100,7 +69,6 @@ var nacidos = 0;
 function nacimiento(){
   var p = new Persona();
   nacidos++;
-  p.id(nacidos);
   return p;
 }
 
@@ -128,40 +96,19 @@ class Humanidad{
     }
     this.vivos = grupo;
   }
-
-
-  //agregar y eliminar rows de la tabla
-  agregarFila(aux, i){
-    document.getElementById("tabla").insertRow(-1).innerHTML = '<td id='+aux.getId()+'>'+aux.getNombre()+'</td>'+'<td>'+aux.getEdad()+'</td>'+'<td>'+aux.getGenero()+'</td>';
-  }
-
-  eliminarFila(aux, i){
-    var table = document.getElementById("tabla");
-    var rowCount = table.rows.length;
-    //console.log(rowCount);
-    
-    if(rowCount <= 1)
-      alert('No se puede eliminar el encabezado');
-    else
-      table.deleteRow(table.rows[i]);
-  }
-
   mostrarHumanos(){
-
+    var cadena = "";
     for (var i = 0; i < h.vivos.length; i++) {
-      if (h.vivos[i].getAlive){
-        this.agregarFila(h.vivos[i], i);
-      } else{
-        this.eliminarFila(h.vivos[i], i);
-      }
-      
+      cadena += "<li>" + h.vivos[i].mostrar() + "</li>";
     }
+    document.getElementById('vivos').innerHTML = cadena;
 
+    cadena = "";
     for (var i = 0; i < h.muertos.length; i++) {
-      this.agregarFila(h.muertos[i]);
+      cadena += "<li>" + h.muertos[i].mostrar() + "</li>";
     }
+    document.getElementById('muertos').innerHTML = cadena;
   }
-
   humanosEdadFertil(){
     var contador = [0,0];         // Contador de [F-Fertiles, M-Fertiles]
 
@@ -173,13 +120,11 @@ class Humanidad{
 
     return contador;
   }
-
   probRepro(){
     var reprProb = this.parejasFertiles()*12.5;
     if (reprProb > 100){  return 100; }
     return reprProb;
   }
-
   muerte(per){
     var p = this.vivos;
     var cem = this.muertos;
@@ -190,7 +135,6 @@ class Humanidad{
     this.vivos = p;
     this.muertos = cem;
   }
-
   parejasFertiles(){
     var pFertiles = this.humanosEdadFertil();
     return Math.min(pFertiles[0],pFertiles[1]);
@@ -217,7 +161,6 @@ function cicloVital(){
     h.vivos[i].crecer();
 
     if(h.vivos[i].suerte > milagroDeLaVida){
-      h.vivos[i].alive(false);
       h.muerte(h.vivos[i]);
     }
   }
@@ -232,14 +175,17 @@ function cicloVital(){
   mostrarEstadistica();
 }
 
-function mostrarEstadistica(){
-  var estadistica = "";
-  estadistica = "Hay " + h.humanosEdadFertil()[0] + " mujeres y " + h.humanosEdadFertil()[1] + " hombres en edad fertil";
-  estadistica += "</br>Hay una probabilidad de " + h.probRepro() + "% de nacimiento";
-  estadistica += "</br>Hay " + h.muertos.length + " fallecidos";
-  estadistica += "</br>Hay " + h.vivos.length + " vivos";
-  estadistica += "</br>Han nacido " + nacidos + " humanos";
-  estadistica += "</br></br><h3>Año " + año;
 
-  document.getElementById('estadisticas').innerHTML = estadistica;
+//Modificar para tabla
+function mostrarEstadistica(){
+  
+  document.getElementById("table").rows[0].cells[1].innerHTML = h.humanosEdadFertil()[0];
+  document.getElementById("table").rows[1].cells[1].innerHTML = h.humanosEdadFertil()[1];
+  document.getElementById("table").rows[2].cells[1].innerHTML = h.probRepro();
+  document.getElementById("table").rows[3].cells[1].innerHTML = h.vivos.length;
+  document.getElementById("table").rows[4].cells[1].innerHTML = h.muertos.length;
+  document.getElementById("table").rows[5].cells[1].innerHTML = nacidos;
+  document.getElementById("table").rows[6].cells[1].innerHTML = año;
+  
+ 
 }
