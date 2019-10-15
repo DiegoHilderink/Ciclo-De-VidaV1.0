@@ -1,5 +1,3 @@
-
-
 var nombres = [
   ["Ana","Sara","Juana","Marta","Sofia","Maria",
   "Fatima","Sandra","Violeta","Estrella","Maite",
